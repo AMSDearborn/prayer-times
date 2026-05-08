@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hijri Prayer Times</title>
+    <style>
+      :root {
+        --red-color: #650a13;
+        --even-bg: #eeeaeb;
+        --white-bg: #ffffff;
+        --border-color: #d3d3d3;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+
+      /* Modern UI Controls */
+      #ui-controls {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #ui-controls select,
+      #ui-controls button {
+        padding: 10px 15px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      #ui-controls button {
+        background-color: var(--red-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+
+      #ui-controls button:hover {
+        background-color: #8b1c20;
+      }
+
+      /* Table Container */
+      #table-container {
+        background: white;
+        max-width: 900px;
+        margin: 0 auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .prayer-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .prayer-table th,
+      .prayer-table td {
+        border: 1px solid var(--border-color);
+        padding: 8px 4px;
+      }
+
+      /* Header Styles */
+      .prayer-table th {
+        background-color: var(--red-color);
+        color: white;
+        padding: 12px 5px;
+        line-height: 1.2;
+      }
+
+      /* Default Column Striping Rule */
+      /* Col 1 (Isha) - Odd - White */
+      .prayer-table td:nth-child(1) {
+        background-color: var(--white-bg);
+      }
+      /* Col 2 (Maghrib) - Even */
+      .prayer-table td:nth-child(2) {
+        background-color: var(--even-bg);
+      }
+      /* Col 3 (Asr) - Odd - White */
+      .prayer-table td:nth-child(3) {
+        background-color: var(--white-bg);
+      }
+      /* Col 4 (Dhuhr) - Even */
+      .prayer-table td:nth-child(4) {
+        background-color: var(--even-bg);
+      }
+      /* Col 5 (Sunrise) - Odd - White */
+      .prayer-table td:nth-child(5) {
+        background-color: var(--white-bg);
+      }
+      /* Col 6 (Fajr) - Even */
+      .prayer-table td:nth-child(6) {
+        background-color: var(--even-bg);
+      }
+      /* Col 7 & 8 (Day En/Ar) - Odd - White (Treated as one column) */
+      .prayer-table td:nth-child(7) {
+        background-color: var(--white-bg);
+        border-right: none;
+      }
+      .prayer-table td:nth-child(8) {
+        background-color: var(--white-bg);
+        border-left: none;
+      }
+      /* Col 9 (Gregorian) - Even */
+      .prayer-table td:nth-child(9) {
+        background-color: var(--even-bg);
+      }
+      /* Col 10 (Hijri) - Odd - White */
+      .prayer-table td:nth-child(10) {
+        background-color: var(--white-bg);
+      }
+
+      /* Row Highlighting (Friday) */
+      .prayer-table tr.friday-row td {
+        background-color: var(--red-color) !important;
+        color: white !important;
+        border-color: #8b1c20;
+      }
+
+      /* Ramadan Exception - Override for Fajr and Maghrib Columns */
+      .prayer-table.is-ramadan td:nth-child(2),
+      .prayer-table.is-ramadan td:nth-child(6) {
+        background-color: var(--red-color) !important;
+        color: white !important;
+      }
+
+      /* DST Split Styling */
+      .prayer-table tr.dst-split td {
+        height: 14px;
+        padding: 0;
+        border-left: none;
+        border-right: none;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10"><path d="M0 5 l 5 -5 l 10 10 l 5 -5" fill="none" stroke="%23999" stroke-width="1.5"/></svg>')
+          repeat-x center;
+        background-color: white !important;
+      }
+
+      /* Print Specific Styling to fit Legal Paper (8.5x14) */
+      @media print {
+        @page {
+          size: legal portrait;
+          margin: 0.2in 0.5in;
+        }
+        body {
+          background-color: white;
+          padding: 0;
+        }
+        #ui-controls {
+          display: none;
+        }
+        #table-container {
+          box-shadow: none;
+          max-width: 100%;
+        }
+        .prayer-table {
+          height: 95vh; /* Expands table naturally to fit legal paper */
+          width: 100vw;
+          font-size: 16pt;
+        }
+        .prayer-table th,
+        .prayer-table td {
+          padding: 4px;
+        }
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ui-controls">
+      <label for="year-select"><strong>Hijri Year:</strong></label>
+      <select id="year-select"></select>
+
+      <label for="month-select"><strong>Month:</strong></label>
+      <select id="month-select">
+        <option value="1">1 - Muharram</option>
+        <option value="2">2 - Safar</option>
+        <option value="3">3 - Rabi al-Awwal</option>
+        <option value="4">4 - Rabi al-Thani</option>
+        <option value="5">5 - Jumada al-Awwal</option>
+        <option value="6">6 - Jumada al-Thani</option>
+        <option value="7">7 - Rajab</option>
+        <option value="8">8 - Shaban</option>
+        <option value="9">9 - Ramadan</option>
+        <option value="10">10 - Shawwal</option>
+        <option value="11">11 - Dhu al-Qadah</option>
+        <option value="12">12 - Dhu al-Hijjah</option>
+      </select>
+
+      <button onclick="handleGenerate()">Fetch Calendar</button>
+      <button onclick="window.print()" style="background-color: #333">
+        Print to PDF
+      </button>
+    </div>
+
+    <div id="table-container">
+      <!-- Table will be injected here -->
+      <p style="text-align: center; padding: 50px; font-size: 18px">
+        Initializing...
+      </p>
+    </div>
+
+    <script>
+      const dayMap = {
+        Sunday: "SUN",
+        Monday: "MON",
+        Tuesday: "TUES",
+        Wednesday: "WED",
+        Thursday: "THU",
+        Friday: "FRI",
+        Saturday: "SAT",
+      };
+
+      let calendarCache = {};
+
+      // Run automatically when the page loads
+      window.onload = async () => {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, "0");
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const yyyy = today.getFullYear();
+
+        let hYear = 1447; // Default fallback
+        let hMonth = 9; // Default fallback (Ramadan)
+
+        try {
+          // Fetch today's Hijri Date to initialize modern dropdowns defaults
+          const res = await fetch(
+            `https://api.aladhan.com/v1/gToH?date=${dd}-${mm}-${yyyy}`,
+          );
+          const json = await res.json();
+          hYear = parseInt(json.data.hijri.year);
+          hMonth = parseInt(json.data.hijri.month.number);
+        } catch (e) {
+          console.error(
+            "Failed to fetch current Hijri date, using fallbacks.",
+            e,
+          );
+        }
+
+        populateYearDropdown(hYear);
+        document.getElementById("month-select").value = hMonth;
+        document.getElementById("year-select").value = hYear;
+
+        fetchAndRender(hYear, hMonth);
+      };
+
+      function populateYearDropdown(currentYear) {
+        const select = document.getElementById("year-select");
+        select.innerHTML = "";
+        for (let y = currentYear - 3; y <= currentYear + 5; y++) {
+          const opt = document.createElement("option");
+          opt.value = y;
+          opt.textContent = y;
+          select.appendChild(opt);
+        }
+      }
+
+      function handleGenerate() {
+        const year = document.getElementById("year-select").value;
+        const month = document.getElementById("month-select").value;
+        fetchAndRender(year, month);
+      }
+
+      async function fetchAndRender(year, month) {
+        const container = document.getElementById("table-container");
+        container.innerHTML =
+          '<p style="text-align: center; padding: 50px; font-size: 18px;">Loading calendar data...</p>';
+
+        try {
+          let data;
+          if (calendarCache[year]) {
+            data = calendarCache[year];
+          } else {
+            const url = `https://api.aladhan.com/v1/hijriCalendar?adjustment=0&year=${year}&annual=true&iso8601=false&method=2&school=0&tune=0,0,0,0,0,0,0,0,0&latitude=42.304304&longitude=-83.143549`;
+            const res = await fetch(url);
+            const json = await res.json();
+            data = json.data;
+            calendarCache[year] = data; // Cache the annual data to avoid extra API hits
+          }
+
+          // Extract specific month logic
+          let monthData;
+          if (Array.isArray(data)) {
+            monthData = data.filter(
+              (d) => parseInt(d.date.hijri.month.number) === parseInt(month),
+            );
+          } else if (data[month]) {
+            monthData = data[month];
+          } else {
+            // Fallback to iterating object properties if formatted differently
+            monthData = Object.values(data).find(
+              (arr) =>
+                arr.length > 0 &&
+                parseInt(arr[0].date.hijri.month.number) === parseInt(month),
+            );
+          }
+
+          if (!monthData || monthData.length === 0) {
+            container.innerHTML =
+              '<p style="text-align: center; padding: 50px; color: red;">No data found for this month and year.</p>';
+            return;
+          }
+
+          renderTable(monthData, month);
+        } catch (e) {
+          console.error(e);
+          container.innerHTML =
+            '<p style="text-align: center; padding: 50px; color: red;">Error loading data from Aladhan API.</p>';
+        }
+      }
+
+      function renderTable(monthData, monthNumber) {
+        const isRamadan = parseInt(monthNumber) === 9;
+
+        const firstGreg = monthData[0].date.gregorian;
+        const lastGreg = monthData[monthData.length - 1].date.gregorian;
+        const gregHeader = `${firstGreg.month.en.substring(0, 3)} ${firstGreg.day} -<br>${lastGreg.month.en.substring(0, 3)} ${lastGreg.day}`;
+
+        const hijriAr = monthData[0].date.hijri.month.ar;
+        const hijriEn = monthData[0].date.hijri.month.en;
+        const hijriHeader = `${hijriAr}<br>${hijriEn}`;
+
+        let html = `<table class="prayer-table ${isRamadan ? "is-ramadan" : ""}">`;
+        html += `<thead>
+                <tr>
+                    <th>العشاء<br>Isha</th>
+                    <th>المغرب<br>Maghrib</th>
+                    <th>العصر<br>Asr</th>
+                    <th>الظهر<br>Dhuhr</th>
+                    <th>الشروق<br>Sunrise</th>
+                    <th>الفجر<br>Fajr</th>
+                    <th colspan="2">اليوم<br>Day</th>
+                    <th>${gregHeader}</th>
+                    <th>${hijriHeader}</th>
+                </tr>
+            </thead><tbody>`;
+
+        let prevDhuhr = null;
+
+        monthData.forEach((day, index) => {
+          const timings = day.timings;
+          const dhuhrStr = timings.Dhuhr.split(" ")[0];
+          const dhuhrMins = timeToMinutes(dhuhrStr);
+
+          // Detect Daylight Saving Time (DST) change if hour jumps by roughly 60 mins (~45 mins threshold)
+          if (prevDhuhr !== null && Math.abs(dhuhrMins - prevDhuhr) >= 45) {
+            html += `<tr class="dst-split"><td colspan="10"></td></tr>`;
+          }
+          prevDhuhr = dhuhrMins;
+
+          const isFriday = day.date.gregorian.weekday.en === "Friday";
+          const rowClass = isFriday ? "friday-row" : "";
+
+          const isha = formatTime(timings.Isha);
+          const maghrib = formatTime(timings.Maghrib);
+          const asr = formatTime(timings.Asr);
+          const dhuhr = formatTime(timings.Dhuhr);
+          const sunrise = formatTime(timings.Sunrise);
+          const fajr = formatTime(timings.Fajr);
+
+          const dayEn =
+            dayMap[day.date.gregorian.weekday.en] ||
+            day.date.gregorian.weekday.en.substring(0, 3).toUpperCase();
+          const dayAr = day.date.hijri.weekday.ar;
+
+          let gregStr = day.date.gregorian.day;
+          // Add Month string on first row or on 1st of Gregorian month
+          if (index === 0 || gregStr === "01") {
+            gregStr = `${day.date.gregorian.month.en.substring(0, 3)} ${gregStr}`;
+          }
+
+          const hijriStr = day.date.hijri.day; // E.g., '01', '02'
+
+          html += `<tr class="${rowClass}">
+                    <td>${isha}</td>
+                    <td>${maghrib}</td>
+                    <td>${asr}</td>
+                    <td>${dhuhr}</td>
+                    <td>${sunrise}</td>
+                    <td>${fajr}</td>
+                    <td>${dayEn}</td>
+                    <td>${dayAr}</td>
+                    <td>${gregStr}</td>
+                    <td>${hijriStr}</td>
+                </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        document.getElementById("table-container").innerHTML = html;
+      }
+
+      // Helper: Converts "15:22" to minutes from midnight
+      function timeToMinutes(timeStr) {
+        const [hh, mm] = timeStr.split(":").map(Number);
+        return hh * 60 + mm;
+      }
+
+      // Helper: Converts "15:22 (EST)" to "3:22"
+      function formatTime(timeStr) {
+        let [hours, mins] = timeStr.split(" ")[0].split(":").map(Number);
+        if (hours > 12) hours -= 12;
+        if (hours === 0) hours = 12;
+        return `${hours}:${mins.toString().padStart(2, "0")}`;
+      }
+    </script>
+  </body>
+</html>
