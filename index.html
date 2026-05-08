@@ -5,15 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hijri Prayer Times</title>
     <style>
+      @font-face {
+        font-family: "Gill Sans";
+        src: url("Gill Sans.otf") format("opentype");
+        font-weight: normal;
+      }
+
+      @font-face {
+        font-family: "Gill Sans";
+        src: url("Gill Sans Bold.otf") format("opentype");
+        font-weight: bold;
+      }
       :root {
         --red-color: #650a13;
         --even-bg: #eeeaeb;
         --white-bg: #ffffff;
-        --border-color: #d3d3d3;
+        --border-color: #f2f2f2;
       }
 
       body {
-        font-family: Arial, sans-serif;
+        font-family: Calibri, Arial, sans-serif;
         margin: 0;
         padding: 20px;
         background-color: #f9f9f9;
@@ -33,11 +44,16 @@
       }
 
       #ui-controls select,
+      #ui-controls input,
       #ui-controls button {
         padding: 10px 15px;
         font-size: 16px;
         border: 1px solid #ccc;
         border-radius: 4px;
+      }
+
+      #ui-controls input[type="number"] {
+        width: 100px;
       }
 
       #ui-controls button {
@@ -56,7 +72,7 @@
       /* Table Container */
       #table-container {
         background: white;
-        max-width: 900px;
+        max-width: calc(96px * 8.5);
         margin: 0 auto;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
@@ -65,28 +81,79 @@
         width: 100%;
         border-collapse: collapse;
         text-align: center;
+      }
+
+      .heading-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .heading-wrapper .heading-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .heading-wrapper .heading-overlay {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        text-align: center;
+        font-family: Calibri, sans-serif;
         font-weight: bold;
+        font-size: 48px;
+        color: var(--red-color);
+        white-space: nowrap;
+        pointer-events: none;
+      }
+
+      .prayer-table thead {
         font-size: 18px;
       }
 
       .prayer-table th,
       .prayer-table td {
         border: 1px solid var(--border-color);
-        padding: 8px 4px;
+        padding: 6px 4px;
       }
 
       /* Header Styles */
       .prayer-table th {
         background-color: var(--red-color);
         color: white;
-        padding: 12px 5px;
         line-height: 1.2;
+        font-family: "Gill Sans", Arial, sans-serif;
+        border-top: none;
+      }
+
+      .prayer-table thead th:first-child {
+        border-left: none;
+      }
+
+      .prayer-table thead th:last-child {
+        border-right: none;
+      }
+
+      .prayer-table thead th {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .prayer-table th:nth-child(8) {
+        font-family: Calibri, sans-serif;
+      }
+
+      .prayer-table td {
+        font-family: Calibri, sans-serif;
+        font-size: 24px;
       }
 
       /* Default Column Striping Rule */
       /* Col 1 (Isha) - Odd - White */
       .prayer-table td:nth-child(1) {
         background-color: var(--white-bg);
+        border-left: none;
       }
       /* Col 2 (Maghrib) - Even */
       .prayer-table td:nth-child(2) {
@@ -112,9 +179,12 @@
       .prayer-table td:nth-child(7) {
         background-color: var(--white-bg);
         border-right: none;
+        font-family: "Gill Sans", Arial, sans-serif;
+        font-weight: bold;
       }
       .prayer-table td:nth-child(8) {
         background-color: var(--white-bg);
+        font-weight: bold;
         border-left: none;
       }
       /* Col 9 (Gregorian) - Even */
@@ -124,20 +194,29 @@
       /* Col 10 (Hijri) - Odd - White */
       .prayer-table td:nth-child(10) {
         background-color: var(--white-bg);
+        border-right: none;
       }
 
       /* Row Highlighting (Friday) */
       .prayer-table tr.friday-row td {
         background-color: var(--red-color) !important;
         color: white !important;
-        border-color: #8b1c20;
+        border-color: var(--border-color);
       }
 
-      /* Ramadan Exception - Override for Fajr and Maghrib Columns */
+      .prayer-table tr.friday-row td {
+        font-weight: bold;
+      }
+
       .prayer-table.is-ramadan td:nth-child(2),
       .prayer-table.is-ramadan td:nth-child(6) {
         background-color: var(--red-color) !important;
         color: white !important;
+      }
+
+      .prayer-table.is-ramadan tr td:nth-child(2),
+      .prayer-table.is-ramadan tr td:nth-child(6) {
+        font-weight: bold;
       }
 
       /* DST Split Styling */
@@ -155,7 +234,7 @@
       @media print {
         @page {
           size: legal portrait;
-          margin: 0.2in 0.5in;
+          margin: 0.2in;
         }
         body {
           background-color: white;
@@ -169,13 +248,18 @@
           max-width: 100%;
         }
         .prayer-table {
-          height: 95vh; /* Expands table naturally to fit legal paper */
           width: 100vw;
           font-size: 16pt;
         }
         .prayer-table th,
         .prayer-table td {
           padding: 4px;
+        }
+        .prayer-table td:nth-child(9) {
+          white-space: nowrap;
+        }
+        .prayer-table td:nth-child(9) .greg-month {
+          font-size: 0.85em;
         }
         * {
           -webkit-print-color-adjust: exact !important;
@@ -187,7 +271,7 @@
   <body>
     <div id="ui-controls">
       <label for="year-select"><strong>Hijri Year:</strong></label>
-      <select id="year-select"></select>
+      <input type="number" id="year-select" min="1" />
 
       <label for="month-select"><strong>Month:</strong></label>
       <select id="month-select">
@@ -229,6 +313,12 @@
         Saturday: "SAT",
       };
 
+      const arabicDayMap = {
+        الاحد: "الأحد",
+        الاثنين: "الإثنين",
+        الاربعاء: "الأربعاء",
+      };
+
       let calendarCache = {};
 
       // Run automatically when the page loads
@@ -264,14 +354,8 @@
       };
 
       function populateYearDropdown(currentYear) {
-        const select = document.getElementById("year-select");
-        select.innerHTML = "";
-        for (let y = currentYear - 3; y <= currentYear + 5; y++) {
-          const opt = document.createElement("option");
-          opt.value = y;
-          opt.textContent = y;
-          select.appendChild(opt);
-        }
+        const input = document.getElementById("year-select");
+        input.value = currentYear;
       }
 
       function handleGenerate() {
@@ -337,9 +421,17 @@
 
         const hijriAr = monthData[0].date.hijri.month.ar;
         const hijriEn = monthData[0].date.hijri.month.en;
+        const hijriYear = monthData[0].date.hijri.year;
         const hijriHeader = `${hijriAr}<br>${hijriEn}`;
-
-        let html = `<table class="prayer-table ${isRamadan ? "is-ramadan" : ""}">`;
+        let html = `<div class="heading-wrapper">
+          <img class="heading-image" src="heading.png" alt="Heading" />
+          <div class="heading-overlay">
+            <span>${hijriEn}</span>
+            <span dir="rtl">${hijriYear}هـ</span>
+            <span>${hijriAr}</span>
+            </div>
+          </div>`;
+        html += `<table class="prayer-table ${isRamadan ? "is-ramadan" : ""}">`;
         html += `<thead>
                 <tr>
                     <th>العشاء<br>Isha</th>
@@ -380,12 +472,14 @@
           const dayEn =
             dayMap[day.date.gregorian.weekday.en] ||
             day.date.gregorian.weekday.en.substring(0, 3).toUpperCase();
-          const dayAr = day.date.hijri.weekday.ar;
+          let dayAr = day.date.hijri.weekday.ar;
+          dayAr = arabicDayMap[dayAr] || dayAr;
 
           let gregStr = day.date.gregorian.day;
           // Add Month string on first row or on 1st of Gregorian month
           if (index === 0 || gregStr === "01") {
-            gregStr = `${day.date.gregorian.month.en.substring(0, 3)} ${gregStr}`;
+            const monthAbbr = day.date.gregorian.month.en.substring(0, 3);
+            gregStr = `<span class="greg-month">${monthAbbr}</span> ${gregStr}`;
           }
 
           const hijriStr = day.date.hijri.day; // E.g., '01', '02'
