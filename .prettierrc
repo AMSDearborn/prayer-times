@@ -1,0 +1,16 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-css-order"
+  ],
+  "importOrder": ["^react", "^[a-zA-Z]", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "cssDeclarationSorterOrder": "concentric-css",
+  "cssDeclarationSorterKeepOverrides": false
+}
