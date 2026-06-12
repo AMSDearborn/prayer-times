@@ -1,0 +1,277 @@
+@font-face {
+  src: url("/fonts/Foda-Free-Font.ttf") format("truetype");
+  font-family: "Foda";
+  font-display: swap;
+}
+
+@font-face {
+  src: url("/fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf")
+    format("truetype");
+  font-family: "Fraunces";
+  font-display: swap;
+}
+
+@font-face {
+  font-weight: 300;
+  src: url("/fonts/Archivo-VariableFont_wdth,wght.ttf") format("truetype");
+  font-family: "Archivo";
+  font-display: swap;
+}
+
+.container {
+  display: flex;
+  position: relative;
+  background-color: var(--color-maroon);
+  width: 8.5in;
+  height: 2in;
+  overflow: hidden;
+}
+
+.container::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  filter: brightness(0) invert(1);
+  background-image: url("/assets/pattern.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  content: "";
+}
+
+.left {
+  display: flex;
+  position: relative;
+  flex: 1;
+  flex-basis: 33.333%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  box-sizing: border-box;
+  padding: var(--border-width);
+  padding-bottom: 0;
+  color: white;
+}
+
+.middle {
+  display: flex;
+  position: relative;
+  flex: 0 0 33.333%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  box-sizing: border-box;
+  border-right: 1px solid var(--color-gold);
+  border-left: 1px solid var(--color-gold);
+  padding: 0 var(--border-width);
+  overflow: hidden auto;
+  color: white;
+}
+
+.right {
+  display: flex;
+  position: relative;
+  flex: 1;
+  flex-basis: 33.333%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  box-sizing: border-box;
+  padding: var(--border-width);
+  padding-bottom: 0;
+  color: white;
+}
+
+/* Left section */
+.logo {
+  filter: brightness(0) invert(1);
+  width: auto;
+  height: 1in;
+}
+
+.address {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 0.5in;
+  color: white;
+  font-size: 12px;
+  text-align: justify;
+}
+
+.addressLine {
+  margin: 0;
+  text-align: justify;
+  text-align-last: justify;
+}
+
+.addressLineLast {
+  width: 100%;
+  letter-spacing: 0.25em;
+  text-align: center;
+  text-align-last: center;
+}
+
+.gold {
+  color: var(--color-gold);
+}
+
+.labelSmall {
+  font-size: 7px;
+  text-transform: uppercase;
+}
+
+.socials {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.socialIcon {
+  filter: brightness(0) saturate(100%) invert(73%) sepia(20%) saturate(600%)
+    hue-rotate(3deg) brightness(90%) contrast(85%);
+  width: 14px;
+  height: 14px;
+}
+
+.hijriArabic {
+  margin: 0;
+  color: var(--color-gold);
+  font-size: 38px;
+  font-family: "Foda", serif;
+}
+
+.hijriEnglish {
+  margin: -4px 0 0;
+  color: white;
+  font-size: 48px;
+  font-family: "Fraunces", serif;
+  white-space: nowrap;
+}
+
+.hijriYear {
+  margin: 0 0 -12px 0;
+  margin-right: -0.5em;
+  color: var(--color-gold);
+  font-size: 20px;
+  font-family: "Fraunces", serif;
+  letter-spacing: 0.5em;
+}
+
+.divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-gold);
+}
+
+.diamond {
+  color: var(--color-gold);
+  font-size: 16px;
+}
+
+.dividerLine {
+  display: inline-block;
+  margin-top: 3px;
+  background-color: var(--color-gold);
+  width: 6em;
+  height: 1px;
+}
+
+.gregRange {
+  margin: 0;
+  color: white;
+  font-weight: 300;
+  font-size: 16px;
+  font-family: "Archivo", sans-serif;
+  white-space: nowrap;
+}
+
+/* Right section */
+.qrCode {
+  width: auto;
+  height: 0.67in;
+}
+
+.rightContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.fridayRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fridayTitle {
+  justify-content: center;
+  gap: 8px;
+  border-bottom: 2px solid var(--color-gold);
+}
+
+.fridayArabicKhutbah {
+  border-bottom: 1px solid var(--color-gold);
+}
+
+.fridayEn {
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  font-family: "Archivo", sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fridayAr {
+  color: var(--color-gold);
+  font-size: 16px;
+  font-family: "Foda", serif;
+}
+
+.khutbahStack {
+  display: flex;
+  flex-direction: column;
+}
+
+.khutbahEn {
+  color: white;
+  font-weight: 600;
+  font-size: 10px;
+  font-family: "Archivo", sans-serif;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.khutbahAr {
+  color: var(--color-gold);
+  font-size: 13px;
+  font-family: "Foda", serif;
+}
+
+.khutbahTime {
+  color: var(--color-gold);
+  font-weight: 500;
+  font-size: 14px;
+  font-family: "Fraunces", serif;
+}
+/* Print */
+@media print {
+  .container {
+    box-shadow: none;
+  }
+}

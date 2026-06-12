@@ -1,0 +1,47 @@
+@font-face {
+  font-weight: normal;
+  src: url("/fonts/Gill Sans.otf") format("opentype");
+  font-family: "Gill Sans";
+  font-display: swap;
+}
+
+@font-face {
+  font-weight: bold;
+  src: url("/fonts/Gill Sans Bold.otf") format("opentype");
+  font-family: "Gill Sans";
+  font-display: swap;
+}
+
+:root {
+  --color-maroon: #650a13;
+  --color-maroon-hover: #8b1c20;
+  --color-gold: #cdab74;
+  --color-even-bg: #eeeaeb;
+  --color-white: #ffffff;
+  --color-border: #f2f2f2;
+  --border-width: 0.25in;
+}
+
+body {
+  margin: 0;
+  background-color: #f9f9f9;
+  font-family: Calibri, Arial, sans-serif;
+}
+
+@media print {
+  @page {
+    size: legal portrait;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    background-color: white;
+    padding: 0;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

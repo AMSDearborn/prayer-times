@@ -1,0 +1,46 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 12px 16px;
+}
+
+.controls select,
+.controls input,
+.controls button {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.controls input[type="number"] {
+  width: 80px;
+}
+
+.controls button {
+  transition: background 0.3s;
+  cursor: pointer;
+  border: none;
+  background-color: var(--color-maroon);
+  color: white;
+  font-weight: bold;
+}
+
+.controls button:hover {
+  background-color: var(--color-maroon-hover);
+}
+
+.printButton {
+  background-color: #333;
+}
+
+@media print {
+  .controls {
+    display: none;
+  }
+}
