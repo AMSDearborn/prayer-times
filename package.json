@@ -1,19 +1,44 @@
 {
-  "name": "ams-prayer-times",
+  "name": "@amsdearborn/prayer-times-widget",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
+  "description": "Prayer times widget for AMS Dearborn with printable monthly calendar",
+  "main": "./dist/prayer-times-widget.umd.cjs",
+  "module": "./dist/prayer-times-widget.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/prayer-times-widget.js",
+      "require": "./dist/prayer-times-widget.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "src/index.d.ts",
+    "public/fonts",
+    "public/assets",
+    "public/icons",
+    "public/ads"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amsdearborn/prayer-times.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:lib": "vite build --mode lib",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "predeploy": "vite build --base /prayer-times/",
-    "deploy": "gh-pages -d dist"
+    "prepublishOnly": "npm run build:lib"
   },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.1",
@@ -24,6 +49,8 @@
     "prettier": "^3.8.4",
     "prettier-plugin-css-order": "^2.2.0",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^4.3.1",
     "vite": "^5.4.14"
   }

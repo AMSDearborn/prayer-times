@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { HIJRI_MONTHS_EN } from "../constants";
+import AdsTable from "./AdsTable";
+import PrayerTable from "./PrayerTable";
 
 const PRAYERS = [
   { key: "Fajr", label: "Fajr", labelAr: "الفجر" },
@@ -12,7 +14,7 @@ const PRAYERS = [
 ];
 
 const API_BASE = "https://api.aladhan.com/v1";
-const LOCATION = { latitude: 42.304304, longitude: -83.143549 };
+const DEFAULT_LOCATION = { latitude: 42.304304, longitude: -83.143549 };
 
 function formatTime12(timeString) {
   const raw = timeString.split(" ")[0];
@@ -87,7 +89,20 @@ function formatDateParam(date) {
   return `${dd}-${mm}-${yyyy}`;
 }
 
-export default function PrayerTimesWidget() {
+/**
+ * PrayerTimesWidget - A self-contained prayer times component.
+ *
+ * Shows today's prayer times (or weekly view) on screen.
+ * "Print Monthly" renders the full monthly PrayerTable + AdsTable in print only.
+ *
+ * @param {Object} props
+ * @param {Object} [props.location] - { latitude, longitude } defaults to AMS Dearborn
+ * @param {string} [props.basePath] - Base path for assets (fonts, icons, ads, etc.)
+ */
+export default function PrayerTimesWidget({
+  location = DEFAULT_LOCATION,
+  basePath = "/",
+}) {
   const [view, setView] = useState("today"); // "today" | "week"
   const [todayData, setTodayData] = useState(null);
   const [weekData, setWeekData] = useState(null);
@@ -95,19 +110,30 @@ export default function PrayerTimesWidget() {
   const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
 
+  // Monthly data for print
+  const [hijriYear, setHijriYear] = useState(null);
+  const [hijriMonth, setHijriMonth] = useState(null);
+  const [monthData, setMonthData] = useState(null);
+  const monthCacheRef = useRef({});
+
   const fetchTodayData = useCallback(async () => {
     const today = new Date();
     const dateParam = formatDateParam(today);
     try {
       const res = await fetch(
-        `${API_BASE}/timings/${dateParam}?latitude=${LOCATION.latitude}&longitude=${LOCATION.longitude}&method=2&school=0`,
+        `${API_BASE}/timings/${dateParam}?latitude=${location.latitude}&longitude=${location.longitude}&method=2&school=0`,
       );
       const json = await res.json();
       setTodayData(json.data);
+
+      // Extract hijri year/month for monthly printing
+      const hijri = json.data.date.hijri;
+      setHijriYear(parseInt(hijri.year));
+      setHijriMonth(parseInt(hijri.month.number));
     } catch (err) {
       console.error("Failed to fetch today's prayer times:", err);
     }
-  }, []);
+  }, [location.latitude, location.longitude]);
 
   const fetchWeekData = useCallback(async () => {
     const today = new Date();
@@ -116,7 +142,7 @@ export default function PrayerTimesWidget() {
       const results = await Promise.all(
         dates.map(async (d) => {
           const res = await fetch(
-            `${API_BASE}/timings/${formatDateParam(d)}?latitude=${LOCATION.latitude}&longitude=${LOCATION.longitude}&method=2&school=0`,
+            `${API_BASE}/timings/${formatDateParam(d)}?latitude=${location.latitude}&longitude=${location.longitude}&method=2&school=0`,
           );
           const json = await res.json();
           return json.data;
@@ -126,7 +152,47 @@ export default function PrayerTimesWidget() {
     } catch (err) {
       console.error("Failed to fetch week prayer times:", err);
     }
-  }, []);
+  }, [location.latitude, location.longitude]);
+
+  const fetchMonthData = useCallback(
+    async (year, month) => {
+      try {
+        let data;
+        if (monthCacheRef.current[year]) {
+          data = monthCacheRef.current[year];
+        } else {
+          const url = `${API_BASE}/hijriCalendar?adjustment=0&year=${year}&annual=true&iso8601=false&method=2&school=0&tune=0,0,0,0,0,0,0,0,0&latitude=${location.latitude}&longitude=${location.longitude}`;
+          const response = await fetch(url);
+          const json = await response.json();
+          data = json.data;
+          monthCacheRef.current[year] = data;
+        }
+
+        let monthDays;
+        if (Array.isArray(data)) {
+          monthDays = data.filter(
+            (day) =>
+              parseInt(day.date.hijri.month.number) === parseInt(month),
+          );
+        } else if (data[month]) {
+          monthDays = data[month];
+        } else {
+          monthDays = Object.values(data).find(
+            (arr) =>
+              arr.length > 0 &&
+              parseInt(arr[0].date.hijri.month.number) === parseInt(month),
+          );
+        }
+
+        if (monthDays && monthDays.length > 0) {
+          setMonthData(monthDays);
+        }
+      } catch (err) {
+        console.error("Failed to fetch monthly data:", err);
+      }
+    },
+    [location.latitude, location.longitude],
+  );
 
   useEffect(() => {
     const init = async () => {
@@ -142,6 +208,13 @@ export default function PrayerTimesWidget() {
       fetchWeekData();
     }
   }, [view, weekData, fetchWeekData]);
+
+  // Fetch monthly data once we know the current hijri month
+  useEffect(() => {
+    if (hijriYear && hijriMonth) {
+      fetchMonthData(hijriYear, hijriMonth);
+    }
+  }, [hijriYear, hijriMonth, fetchMonthData]);
 
   // Countdown timer
   useEffect(() => {
@@ -167,105 +240,126 @@ export default function PrayerTimesWidget() {
   const hijriDate = formatHijriDate(todayData.date.hijri);
 
   return (
-    <section
-      aria-labelledby="widget-prayer-times-heading"
-      className="relative isolate overflow-hidden border-y border-[#e8dcc5]/70 bg-[#fdfbf7] print:hidden"
-    >
-      {/* Geometric background */}
-      <div
-        aria-hidden
-        className="bg-geometric pointer-events-none absolute inset-0 opacity-50"
-      />
+    <>
+      {/* On-screen widget */}
+      <section
+        aria-labelledby="widget-prayer-times-heading"
+        className="relative isolate overflow-hidden border-y border-[#e8dcc5]/70 bg-[#fdfbf7] print:hidden"
+      >
+        {/* Geometric background */}
+        <div
+          aria-hidden
+          className="bg-geometric pointer-events-none absolute inset-0 opacity-50"
+        />
 
-      <div className="relative mx-auto max-w-4xl px-6 py-12 lg:px-10 lg:py-16">
-        {/* Header area */}
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-8">
-            <div className="flex flex-col">
-              <span className="font-manrope text-[10px] font-semibold tracking-[0.22em] text-[#a88b5e] uppercase">
-                Gregorian
-              </span>
-              <span className="font-fraunces text-2xl tracking-tight text-[#1f1b16] lg:text-[26px]">
-                {gregorianDate}
-              </span>
+        <div className="relative mx-auto max-w-4xl px-6 py-12 lg:px-10 lg:py-16">
+          {/* Header area */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-8">
+              <div className="flex flex-col">
+                <span className="font-manrope text-[10px] font-semibold tracking-[0.22em] text-[#a88b5e] uppercase">
+                  Gregorian
+                </span>
+                <span className="font-fraunces text-2xl tracking-tight text-[#1f1b16] lg:text-[26px]">
+                  {gregorianDate}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-manrope text-[10px] font-semibold tracking-[0.22em] text-[#a88b5e] uppercase">
+                  Hijri
+                </span>
+                <span className="font-fraunces text-2xl tracking-tight text-[#1f1b16] lg:text-[26px]">
+                  {hijriDate.en}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="font-manrope text-[10px] font-semibold tracking-[0.22em] text-[#a88b5e] uppercase">
-                Hijri
-              </span>
-              <span className="font-fraunces text-2xl tracking-tight text-[#1f1b16] lg:text-[26px]">
-                {hijriDate.en}
-              </span>
-            </div>
+
+            {/* Next prayer countdown */}
+            {nextPrayer && (
+              <p
+                role="status"
+                aria-live="polite"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-[#fbf2f3] px-3 py-1 font-manrope text-[12.5px] font-medium tracking-wide text-(--color-maroon)"
+              >
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 animate-pulse rounded-full bg-(--color-maroon)"
+                />
+                {nextPrayer.countdown
+                  ? `Next: ${nextPrayer.label} in ${nextPrayer.countdown}`
+                  : `Next: ${nextPrayer.label}`}
+              </p>
+            )}
           </div>
 
-          {/* Next prayer countdown */}
-          {nextPrayer && (
-            <p
-              role="status"
-              aria-live="polite"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-[#fbf2f3] px-3 py-1 font-manrope text-[12.5px] font-medium tracking-wide text-(--color-maroon)"
+          {/* View toggle + Print button */}
+          <div className="mt-8 flex items-center gap-2">
+            <button
+              onClick={() => setView("today")}
+              className={`rounded-full px-4 py-1.5 text-[13px] font-semibold tracking-wide transition-colors ${
+                view === "today"
+                  ? "bg-(--color-maroon) text-white"
+                  : "border border-[#e8dcc5] bg-white text-[#3a342e]"
+              }`}
             >
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 animate-pulse rounded-full bg-(--color-maroon)"
-              />
-              {nextPrayer.countdown
-                ? `Next: ${nextPrayer.label} in ${nextPrayer.countdown}`
-                : `Next: ${nextPrayer.label}`}
-            </p>
+              Today
+            </button>
+            <button
+              onClick={() => setView("week")}
+              className={`rounded-full px-4 py-1.5 text-[13px] font-semibold tracking-wide transition-colors ${
+                view === "week"
+                  ? "bg-(--color-maroon) text-white"
+                  : "border border-[#e8dcc5] bg-white text-[#3a342e]"
+              }`}
+            >
+              This Week
+            </button>
+
+            <button
+              onClick={() => window.print()}
+              className="ml-auto inline-flex items-center gap-2 rounded-full border border-[#e8dcc5] bg-white px-4 py-1.5 text-[13px] font-semibold tracking-wide text-[#3a342e] transition-colors hover:border-(--color-maroon) hover:bg-(--color-maroon) hover:text-white"
+            >
+              <PrinterIcon />
+              Print Monthly
+            </button>
+          </div>
+
+          {/* Prayer times */}
+          {view === "today" && (
+            <TodayView timings={todayData.timings} nextPrayer={nextPrayer} />
           )}
+          {view === "week" && (
+            <WeekView weekData={weekData} todayData={todayData} />
+          )}
+
+          {/* Khutbah info */}
+          <div className="mt-6 border-t border-[#e8dcc5]/70 pt-6 text-[13px]">
+            <p className="text-[#6f6862]">
+              <span className="font-medium text-[#3a342e]">
+                Friday Khutbah:
+              </span>{" "}
+              Arabic 12:00 PM · English 1:00 PM
+            </p>
+          </div>
         </div>
+      </section>
 
-        {/* View toggle + Print button */}
-        <div className="mt-8 flex items-center gap-2">
-          <button
-            onClick={() => setView("today")}
-            className={`rounded-full px-4 py-1.5 text-[13px] font-semibold tracking-wide transition-colors ${
-              view === "today"
-                ? "bg-(--color-maroon) text-white"
-                : "border border-[#e8dcc5] bg-white text-[#3a342e]"
-            }`}
-          >
-            Today
-          </button>
-          <button
-            onClick={() => setView("week")}
-            className={`rounded-full px-4 py-1.5 text-[13px] font-semibold tracking-wide transition-colors ${
-              view === "week"
-                ? "bg-(--color-maroon) text-white"
-                : "border border-[#e8dcc5] bg-white text-[#3a342e]"
-            }`}
-          >
-            This Week
-          </button>
-
-          <button
-            onClick={() => window.print()}
-            className="ml-auto inline-flex items-center gap-2 rounded-full border border-[#e8dcc5] bg-white px-4 py-1.5 text-[13px] font-semibold tracking-wide text-[#3a342e] transition-colors hover:border-(--color-maroon) hover:bg-(--color-maroon) hover:text-white"
-          >
-            <PrinterIcon />
-            Print Monthly
-          </button>
-        </div>
-
-        {/* Prayer times */}
-        {view === "today" && (
-          <TodayView timings={todayData.timings} nextPrayer={nextPrayer} />
-        )}
-        {view === "week" && (
-          <WeekView weekData={weekData} todayData={todayData} />
-        )}
-
-        {/* Khutbah info */}
-        <div className="mt-6 border-t border-[#e8dcc5]/70 pt-6 text-[13px]">
-          <p className="text-[#6f6862]">
-            <span className="font-medium text-[#3a342e]">Friday Khutbah:</span>{" "}
-            Arabic 12:00 PM · English 1:00 PM
-          </p>
-        </div>
+      {/* Print-only: Full monthly prayer table + ads */}
+      <div className="hidden print:block">
+        <PrayerTable
+          monthData={monthData}
+          month={hijriMonth}
+          loading={false}
+          error={null}
+          basePath={basePath}
+        />
+        <AdsTable
+          monthData={monthData}
+          month={hijriMonth}
+          basePath={basePath}
+        />
       </div>
-    </section>
+    </>
   );
 }
 
@@ -361,7 +455,8 @@ function WeekView({ weekData, todayData }) {
                   {monthShort} {gregDay}
                 </td>
                 <td className="font-manrope px-2 py-2 text-[13px] whitespace-nowrap text-[#6f6862]">
-                  {parseInt(day.date.hijri.day)} {HIJRI_MONTHS_EN[parseInt(day.date.hijri.month.number) - 1]}
+                  {parseInt(day.date.hijri.day)}{" "}
+                  {HIJRI_MONTHS_EN[parseInt(day.date.hijri.month.number) - 1]}
                 </td>
                 {PRAYERS.map(({ key }) => (
                   <td

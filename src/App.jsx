@@ -150,9 +150,10 @@ export default function App() {
         month={hijriMonth}
         loading={loading}
         error={error}
+        basePath={import.meta.env.BASE_URL}
       />
 
-      <AdsTable monthData={monthData} month={hijriMonth} />
+      <AdsTable monthData={monthData} month={hijriMonth} basePath={import.meta.env.BASE_URL} />
 
       <PrayerTimesWidget />
     </>

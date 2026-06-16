@@ -18,7 +18,7 @@ function formatTime(timeString) {
   return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
-export default function PrayerTable({ monthData, month, loading, error }) {
+export default function PrayerTable({ monthData, month, loading, error, basePath = "/" }) {
   const isRamadan = parseInt(month) === 9;
 
   let previousDhuhrMinutes = null;
@@ -152,7 +152,7 @@ export default function PrayerTable({ monthData, month, loading, error }) {
 
   return (
     <section className="mx-auto h-[14in] w-[8.5in] shadow-2xl print:shadow-none">
-      <Header monthData={monthData} month={month} />
+      <Header monthData={monthData} month={month} basePath={basePath} />
       {loading && (
         <p className="p-[50px] text-center text-[18px]">
           Loading calendar data...

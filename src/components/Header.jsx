@@ -6,9 +6,7 @@ import {
   HIJRI_MONTHS_EN,
 } from "../constants";
 
-const base = import.meta.env.BASE_URL;
-
-export default function Header({ monthData, month }) {
+export default function Header({ monthData, month, basePath = "/" }) {
   const hijriEnglishRef = useRef(null);
 
   useEffect(() => {
@@ -58,7 +56,7 @@ export default function Header({ monthData, month }) {
       <div className="relative z-2 box-border flex flex-1 basis-1/3 flex-col items-center justify-center gap-1 p-(--border-width) pb-0 text-white">
         <img
           className="h-[1in] w-auto brightness-0 invert"
-          src={`${base}assets/ams-logo-full.svg`}
+          src={`${basePath}assets/ams-logo-full.svg`}
           alt="AMS Logo"
         />
         <div className="flex h-[0.5in] flex-col justify-center text-justify text-[12px] text-white">
@@ -83,17 +81,17 @@ export default function Header({ monthData, month }) {
         <div className="flex flex-row items-center justify-center gap-2">
           <img
             className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${base}icons/facebook.svg`}
+            src={`${basePath}icons/facebook.svg`}
             alt="Facebook"
           />
           <img
             className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${base}icons/instagram.svg`}
+            src={`${basePath}icons/instagram.svg`}
             alt="Instagram"
           />
           <img
             className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${base}icons/youtube.svg`}
+            src={`${basePath}icons/youtube.svg`}
             alt="YouTube"
           />
         </div>
@@ -127,7 +125,7 @@ export default function Header({ monthData, month }) {
       <div className="relative z-2 box-border flex flex-1 basis-1/3 flex-col items-center justify-center gap-1 p-(--border-width) pb-0 text-white">
         <img
           className="h-[0.67in] w-auto"
-          src={`${base}assets/amsdearborn-linktree-qr-code.svg`}
+          src={`${basePath}assets/amsdearborn-linktree-qr-code.svg`}
           alt="AMS Dearborn Linktree QR Code"
         />
         <div className="flex w-full flex-col">
