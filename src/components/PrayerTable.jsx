@@ -151,7 +151,7 @@ export default function PrayerTable({ monthData, month, loading, error }) {
   }
 
   return (
-    <div className="mx-auto h-[12in] w-[8.5in] shadow-[0_4px_6px_rgba(0,0,0,0.1)] print:shadow-none">
+    <section className="mx-auto h-[14in] w-[8.5in] shadow-2xl print:shadow-none">
       <Header monthData={monthData} month={month} />
       {loading && (
         <p className="p-[50px] text-center text-[18px]">
@@ -214,6 +214,6 @@ export default function PrayerTable({ monthData, month, loading, error }) {
           <tbody className="[&_tr:first-child_td]:border-t-0">{rows}</tbody>
         </table>
       )}
-    </div>
+    </section>
   );
 }
