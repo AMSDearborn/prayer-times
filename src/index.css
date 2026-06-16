@@ -1,15 +1,142 @@
+@import "tailwindcss";
+
+/* Amiri */
 @font-face {
+  font-style: normal;
   font-weight: normal;
-  src: url("/fonts/Gill Sans.otf") format("opentype");
-  font-family: "Gill Sans";
+  src: url("/fonts/amiri-regular.ttf") format("truetype");
+  font-family: "Amiri";
   font-display: swap;
 }
 
 @font-face {
+  font-style: normal;
   font-weight: bold;
-  src: url("/fonts/Gill Sans Bold.otf") format("opentype");
-  font-family: "Gill Sans";
+  src: url("/fonts/amiri-bold.ttf") format("truetype");
+  font-family: "Amiri";
   font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  font-weight: normal;
+  src: url("/fonts/amiri-italic.ttf") format("truetype");
+  font-family: "Amiri";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  font-weight: bold;
+  src: url("/fonts/amiri-bold-italic.ttf") format("truetype");
+  font-family: "Amiri";
+  font-display: swap;
+}
+
+/* Archivo (Variable) */
+@font-face {
+  font-style: normal;
+  src: url("/fonts/archivo-variable.ttf") format("truetype");
+  font-family: "Archivo";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  src: url("/fonts/archivo-italic-variable.ttf") format("truetype");
+  font-family: "Archivo";
+  font-display: swap;
+}
+
+/* Foda */
+@font-face {
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/foda-regular.ttf") format("truetype");
+  font-family: "Foda";
+  font-display: swap;
+}
+
+/* Fraunces (Variable) */
+@font-face {
+  font-style: normal;
+  src: url("/fonts/fraunces-variable.ttf") format("truetype");
+  font-family: "Fraunces";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  src: url("/fonts/fraunces-italic-variable.ttf") format("truetype");
+  font-family: "Fraunces";
+  font-display: swap;
+}
+
+/* Gill Sans Nova */
+@font-face {
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/gill-sans-nova.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  font-weight: 400;
+  src: url("/fonts/gill-sans-nova-italic.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/gill-sans-nova-bold.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: italic;
+  font-weight: 600;
+  src: url("/fonts/gill-sans-nova-bold-italic.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/gill-sans-nova-extrabold.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+@font-face {
+  font-style: normal;
+  font-weight: 900;
+  src: url("/fonts/gill-sans-nova-ultrabold.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+/* Manrope (Variable) */
+@font-face {
+  font-style: normal;
+  src: url("/fonts/manrope-variable.ttf") format("truetype");
+  font-family: "Manrope";
+  font-display: swap;
+}
+
+/* Tailwind theme */
+@theme {
+  --font-amiri: "Amiri", serif;
+  --font-archivo: "Archivo", sans-serif;
+  --font-foda: "Foda", serif;
+  --font-fraunces: "Fraunces", serif;
+  --font-gill-sans-nova: "Gill Sans Nova", sans-serif;
+  --font-manrope: "Manrope", sans-serif;
 }
 
 :root {

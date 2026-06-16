@@ -30,8 +30,9 @@
   background-color: var(--color-maroon);
   padding: 2px 4px;
   color: white;
+  font-weight: 400;
   line-height: 1.1;
-  font-family: "Gill Sans", Arial, sans-serif;
+  font-family: "Gill Sans Nova", Arial, sans-serif;
 }
 
 .table th:nth-child(8) {
@@ -39,7 +40,7 @@
 }
 
 .table th:nth-child(9) {
-  width: 82px;
+  width: 111px;
 }
 
 .table th:nth-child(9) span:first-child {
@@ -73,7 +74,7 @@
 .table td:nth-child(7) {
   border-right: none;
   font-weight: bold;
-  font-family: "Gill Sans", Arial, sans-serif;
+  font-family: "Gill Sans Nova", Arial, sans-serif;
 }
 
 .table td:nth-child(8) {
