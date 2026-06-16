@@ -5,7 +5,6 @@ import {
   HIJRI_MONTHS_EN,
 } from "../constants";
 import Header from "./Header";
-import styles from "./PrayerTable.module.css";
 
 function timeToMinutes(timeString) {
   const [hours, minutes] = timeString.split(":").map(Number);
@@ -61,8 +60,11 @@ export default function PrayerTable({ monthData, month, loading, error }) {
         Math.abs(dhuhrMinutes - previousDhuhrMinutes) >= 45
       ) {
         rows.push(
-          <tr key={`dst-${index}`} className={styles.dstSplit}>
-            <td colSpan="10"></td>
+          <tr key={`dst-${index}`}>
+            <td
+              colSpan="10"
+              className="h-[6px] border-x-0 border-y-2 border-dashed border-(--color-gold) p-0"
+            ></td>
           </tr>,
         );
       }
@@ -81,79 +83,135 @@ export default function PrayerTable({ monthData, month, loading, error }) {
       const gregorianDay = day.date.gregorian.day;
       const showMonth = index === 0 || gregorianDay === "01";
 
+      const fridayTd =
+        "border-none bg-[rgba(101,10,19,0.9)] text-white font-bold";
+      const ramadanTd =
+        "bg-[rgba(207,171,116,0.7)] text-[rgba(101,10,19,0.9)] font-bold";
+
       rows.push(
-        <tr key={index} className={isFriday ? styles.fridayRow : undefined}>
-          <td>{formatTime(timings.Isha)}</td>
-          <td>{formatTime(timings.Maghrib)}</td>
-          <td>{formatTime(timings.Asr)}</td>
-          <td>{formatTime(timings.Dhuhr)}</td>
-          <td>{formatTime(timings.Sunrise)}</td>
-          <td>{formatTime(timings.Fajr)}</td>
-          <td>{dayEnglish}</td>
-          <td>{dayArabic}</td>
-          <td>
+        <tr key={index}>
+          <td
+            className={`border border-l-0 border-(--color-border) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {formatTime(timings.Isha)}
+          </td>
+          <td
+            className={`border border-(--color-border) bg-(--color-even-bg) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : isRamadan ? ramadanTd : "bg-white"}`}
+          >
+            {formatTime(timings.Maghrib)}
+          </td>
+          <td
+            className={`border border-(--color-border) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {formatTime(timings.Asr)}
+          </td>
+          <td
+            className={`border border-(--color-border) bg-(--color-even-bg) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {formatTime(timings.Dhuhr)}
+          </td>
+          <td
+            className={`border border-(--color-border) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {formatTime(timings.Sunrise)}
+          </td>
+          <td
+            className={`border border-(--color-border) bg-(--color-even-bg) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : isRamadan ? ramadanTd : "bg-white"}`}
+          >
+            {formatTime(timings.Fajr)}
+          </td>
+          <td
+            className={`font-gill-sans-nova border border-r-0 border-(--color-border) px-1 py-0 text-[20px] font-bold ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {dayEnglish}
+          </td>
+          <td
+            className={`border border-l-0 border-(--color-border) px-1 py-0 font-[Calibri,sans-serif] text-[20px] font-bold ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {dayArabic}
+          </td>
+          <td
+            className={`border border-(--color-border) bg-(--color-even-bg) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
             {showMonth && (
-              <span className={styles.gregMonth}>
+              <span className="text-[0.75em]">
                 {day.date.gregorian.month.en.substring(0, 3)}{" "}
               </span>
             )}
             {gregorianDay}
           </td>
-          <td>{day.date.hijri.day}</td>
+          <td
+            className={`border border-r-0 border-(--color-border) px-1 py-0 font-[Calibri,sans-serif] text-[20px] ${isFriday ? fridayTd : "bg-white"}`}
+          >
+            {day.date.hijri.day}
+          </td>
         </tr>,
       );
     });
   }
 
   return (
-    <div className={styles.tableContainer}>
+    <div className="mx-auto h-[12in] w-[8.5in] shadow-[0_4px_6px_rgba(0,0,0,0.1)] print:shadow-none">
       <Header monthData={monthData} month={month} />
-      {loading && <p className={styles.message}>Loading calendar data...</p>}
-      {error && <p className={styles.errorMessage}>{error}</p>}
+      {loading && (
+        <p className="p-[50px] text-center text-[18px]">
+          Loading calendar data...
+        </p>
+      )}
+      {error && (
+        <p className="p-[50px] text-center text-[18px] text-red-500">{error}</p>
+      )}
       {monthData && (
-        <table className={`${styles.table} ${isRamadan ? styles.ramadan : ""}`}>
-          <thead>
+        <table className="h-[12in] w-full table-fixed border-collapse border-t-0 border-r-(length:--border-width) border-b-(length:--border-width) border-l-(length:--border-width) border-solid border-(--color-maroon) text-center">
+          <thead className="text-[16px]">
             <tr>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 العشاء
                 <br />
                 Isha
               </th>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 المغرب
                 <br />
                 Maghrib
               </th>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 العصر
                 <br />
                 Asr
               </th>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 الظهر
                 <br />
                 Dhuhr
               </th>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 الشروق
                 <br />
                 Sunrise
               </th>
-              <th>
+              <th className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
                 الفجر
                 <br />
                 Fajr
               </th>
-              <th colSpan="2">
+              <th
+                colSpan="2"
+                className="font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white"
+              >
                 اليوم
                 <br />
                 Day
               </th>
-              <th>{gregHeader}</th>
-              <th>{hijriHeader}</th>
+              <th className="bg-(--color-maroon) px-1 py-0.5 font-[Calibri,sans-serif] leading-[1.1] font-normal text-white">
+                {gregHeader}
+              </th>
+              <th className="width-[111px] font-gill-sans-nova bg-(--color-maroon) px-1 py-0.5 leading-[1.1] font-normal text-white">
+                {hijriHeader}
+              </th>
             </tr>
           </thead>
-          <tbody>{rows}</tbody>
+          <tbody className="[&_tr:first-child_td]:border-t-0">{rows}</tbody>
         </table>
       )}
     </div>

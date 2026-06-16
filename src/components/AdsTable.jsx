@@ -1,11 +1,9 @@
 import { useState } from "react";
 
-import styles from "./AdsTable.module.css";
 import Header from "./Header";
 
 const base = import.meta.env.BASE_URL;
 const AD_EXTENSIONS = ["png", "jpg", "jpeg"];
-const TOTAL_CELLS = 21; // 3 columns x 7 rows
 
 function AdCell({ adNumber }) {
   const [extIndex, setExtIndex] = useState(0);
@@ -21,8 +19,8 @@ function AdCell({ adNumber }) {
 
   if (failed) {
     return (
-      <td className={styles.cell}>
-        <div className={styles.placeholder}>
+      <td className="relative m-0.5 border-2 border-solid border-(--color-maroon) overflow-hidden p-0">
+        <div className="flex h-full w-full items-center justify-center box-border p-2 text-center text-[18px] font-bold font-gill-sans-nova text-(--color-maroon)">
           Advertise Here
           <br />
           (313) 849-2147
@@ -32,9 +30,9 @@ function AdCell({ adNumber }) {
   }
 
   return (
-    <td className={styles.cell}>
+    <td className="relative m-0.5 border-2 border-solid border-(--color-maroon) overflow-hidden p-0">
       <img
-        className={styles.adImage}
+        className="absolute top-0 left-0 block h-full w-full object-fill"
         src={`${base}ads/${adNumber}.${AD_EXTENSIONS[extIndex]}`}
         alt={`Ad ${adNumber}`}
         onError={handleError}
@@ -53,14 +51,14 @@ export default function AdsTable({ monthData, month }) {
       cells.push(<AdCell key={adNumber} adNumber={adNumber} />);
       adNumber++;
     }
-    rows.push(<tr key={row}>{cells}</tr>);
+    rows.push(<tr key={row} className="grid grid-cols-3 h-full">{cells}</tr>);
   }
 
   return (
-    <div className={styles.adsContainer}>
+    <div className="page-break-before-always mx-auto hidden w-[8.5in] h-[14in] overflow-hidden bg-white print:block">
       <Header monthData={monthData} month={month} />
-      <table className={styles.adsTable}>
-        <tbody>{rows}</tbody>
+      <table className="w-full h-[12in] table-fixed border-separate border-spacing-0.5 border-t-0 border-r-(length:--border-width) border-b-(length:--border-width) border-l-(length:--border-width) border-solid border-(--color-maroon)">
+        <tbody className="grid grid-rows-[repeat(7,1fr)] h-full">{rows}</tbody>
       </table>
     </div>
   );

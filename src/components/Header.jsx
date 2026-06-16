@@ -5,7 +5,6 @@ import {
   HIJRI_MONTHS_AR,
   HIJRI_MONTHS_EN,
 } from "../constants";
-import styles from "./Header.module.css";
 
 const base = import.meta.env.BASE_URL;
 
@@ -17,6 +16,8 @@ export default function Header({ monthData, month }) {
     if (!el) return;
 
     const container = el.parentElement;
+    container.style.overflow = "auto";
+
     let size = 48;
     el.style.fontSize = `${size}px`;
 
@@ -24,6 +25,8 @@ export default function Header({ monthData, month }) {
       size -= 1;
       el.style.fontSize = `${size}px`;
     }
+
+    container.style.overflow = "hidden";
   }, [month, monthData]);
 
   if (!monthData || monthData.length === 0) return null;
@@ -50,84 +53,117 @@ export default function Header({ monthData, month }) {
       : `${firstMonthName} ${firstDay} - ${lastMonthName} ${lastDay}, ${gregorianYear}`;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.left}>
+    <div className="header-container relative flex h-[2in] w-[8.5in] overflow-hidden bg-(--color-maroon) print:shadow-none">
+      {/* Left section */}
+      <div className="relative z-2 box-border flex flex-1 basis-1/3 flex-col items-center justify-center gap-1 p-(--border-width) pb-0 text-white">
         <img
-          className={styles.logo}
-          src={`${base}assets/AMS-Logo.svg`}
+          className="h-[1in] w-auto brightness-0 invert"
+          src={`${base}assets/ams-logo-full.svg`}
           alt="AMS Logo"
         />
-        <div className={styles.address}>
-          <p className={`${styles.addressLine} ${styles.gold}`}>
+        <div className="flex h-[0.5in] flex-col justify-center text-justify text-[12px] text-white">
+          <p className="m-0 text-justify text-(--color-gold) [text-align-last:justify]">
             9945 Vernor Hwy. Dearborn, MI 48120
           </p>
-          <p className={styles.addressLine}>
-            <span className={`${styles.labelSmall} ${styles.gold}`}>Main</span>{" "}
+          <p className="m-0 text-justify [text-align-last:justify]">
+            <span className="text-[7px] text-(--color-gold) uppercase">
+              Main
+            </span>{" "}
             (313) 849-2147 •{" "}
-            <span className={`${styles.labelSmall} ${styles.gold}`}>Imam</span>{" "}
+            <span className="text-[7px] text-(--color-gold) uppercase">
+              Imam
+            </span>{" "}
             (313) 849-4416
           </p>
-          <p className={`${styles.addressLine} ${styles.addressLineLast}`}>
-            services<span className={styles.gold}>@AMSDearborn.org</span>
+          <p className="m-0 w-full text-center tracking-[0.25em] [text-align-last:center]">
+            services
+            <span className="text-(--color-gold)">@AMSDearborn.org</span>
           </p>
         </div>
-        <div className={styles.socials}>
+        <div className="flex flex-row items-center justify-center gap-2">
           <img
-            className={styles.socialIcon}
+            className="h-3.5 w-3.5 fill-(--color-gold)"
             src={`${base}icons/facebook.svg`}
             alt="Facebook"
           />
           <img
-            className={styles.socialIcon}
+            className="h-3.5 w-3.5 fill-(--color-gold)"
             src={`${base}icons/instagram.svg`}
             alt="Instagram"
           />
           <img
-            className={styles.socialIcon}
+            className="h-3.5 w-3.5 fill-(--color-gold)"
             src={`${base}icons/youtube.svg`}
             alt="YouTube"
           />
         </div>
       </div>
 
-      <div className={styles.middle}>
-        <p className={styles.hijriArabic}>{hijriArabic}</p>
-        <p className={styles.hijriEnglish} ref={hijriEnglishRef}>
+      {/* Middle section */}
+      <div className="relative z-2 box-border flex flex-1 basis-1/3 flex-col items-center justify-around overflow-x-hidden overflow-y-auto border-x border-(--color-gold) p-(--border-width) pb-0 text-white">
+        <p className="font-foda mt-[-10px] text-[38px] text-(--color-gold)">
+          {hijriArabic}
+        </p>
+        <p
+          className="font-fraunces m-0 -mt-1 -mb-3 text-[48px] whitespace-nowrap text-white"
+          ref={hijriEnglishRef}
+        >
           {hijriEnglish}
         </p>
-        <p className={styles.hijriYear}>{hijriYear}</p>
-        <div className={styles.divider}>
-          <span className={styles.diamond}>◆</span>
-          <span className={styles.dividerLine}></span>
-          <span className={styles.diamond}>◆</span>
+        <p className="font-fraunces mr-[-0.5em] text-[20px] tracking-[0.5em] text-(--color-gold)">
+          {hijriYear}
+        </p>
+        <div className="mb[-10px] mt-[-16px] mr-[-0.5em] ml-0 flex items-center justify-center gap-1.5 text-(--color-gold)">
+          <span className="text-[16px] text-(--color-gold)">◆</span>
+          <span className="mt-[3px] inline-block h-px w-[6em] bg-(--color-gold)"></span>
+          <span className="text-[16px] text-(--color-gold)">◆</span>
         </div>
-        <p className={styles.gregRange}>{gregRange}</p>
+        <p className="font-archivo m-0 text-[16px] font-light whitespace-nowrap text-white">
+          {gregRange}
+        </p>
       </div>
 
-      <div className={styles.right}>
+      {/* Right section */}
+      <div className="relative z-2 box-border flex flex-1 basis-1/3 flex-col items-center justify-center gap-1 p-(--border-width) pb-0 text-white">
         <img
-          className={styles.qrCode}
+          className="h-[0.67in] w-auto"
           src={`${base}assets/amsdearborn-linktree-qr-code.svg`}
           alt="AMS Dearborn Linktree QR Code"
         />
-        <div className={styles.rightContent}>
-          <div className={`${styles.fridayRow} ${styles.fridayTitle}`}>
-            <span className={styles.fridayEn}>FRIDAY PRAYER</span>
-            <span className={styles.fridayAr}>صلاة الجمعة</span>
+        <div className="flex w-full flex-col">
+          <div className="flex items-center justify-center gap-2 border-b-2 border-(--color-gold)">
+            <span className="font-archivo text-[12px] font-bold tracking-wider text-white uppercase">
+              FRIDAY PRAYER
+            </span>
+            <span className="font-foda text-[16px] text-(--color-gold)">
+              صلاة الجمعة
+            </span>
           </div>
-          <div className={`${styles.fridayRow} ${styles.fridayArabicKhutbah}`}>
-            <div className={styles.khutbahStack}>
-              <span className={styles.khutbahEn}>ARABIC KHUTBAH</span>
-              <span className={styles.khutbahAr}>الخطبة العربية</span>
+          <div className="flex items-center justify-between border-b border-(--color-gold)">
+            <div className="flex flex-col">
+              <span className="font-archivo text-[10px] font-semibold tracking-[0.03em] text-white uppercase">
+                ARABIC KHUTBAH
+              </span>
+              <span className="font-foda text-[13px] text-(--color-gold)">
+                الخطبة العربية
+              </span>
             </div>
-            <span className={styles.khutbahTime}>12:00 PM</span>
+            <span className="font-fraunces text-[14px] font-medium text-(--color-gold)">
+              12:00 PM
+            </span>
           </div>
-          <div className={styles.fridayRow}>
-            <div className={styles.khutbahStack}>
-              <span className={styles.khutbahEn}>ENGLISH KHUTBAH</span>
-              <span className={styles.khutbahAr}>الخطبة الإنجليزية</span>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="font-archivo text-[10px] font-semibold tracking-[0.03em] text-white uppercase">
+                ENGLISH KHUTBAH
+              </span>
+              <span className="font-foda text-[13px] text-(--color-gold)">
+                الخطبة الإنجليزية
+              </span>
             </div>
-            <span className={styles.khutbahTime}>1:00 PM</span>
+            <span className="font-fraunces text-[14px] font-medium text-(--color-gold)">
+              1:00 PM
+            </span>
           </div>
         </div>
       </div>

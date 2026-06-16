@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import AdsTable from "./components/AdsTable";
-import styles from "./components/App.module.css";
 import PrayerTable from "./components/PrayerTable";
 import { HIJRI_MONTHS_EN } from "./constants";
 
@@ -115,7 +114,7 @@ export default function App() {
 
   return (
     <>
-      <div className={styles.controls}>
+      <div className="flex flex-wrap items-center justify-center gap-2.5 bg-white px-4 py-3 shadow-[0_-4px_6px_rgba(0,0,0,0.1)] print:hidden [&_select]:border [&_select]:border-[#ccc] [&_select]:rounded [&_select]:px-3 [&_select]:py-2.5 [&_select]:text-sm [&_input]:border [&_input]:border-[#ccc] [&_input]:rounded [&_input]:px-3 [&_input]:py-2.5 [&_input]:text-sm [&_input[type=number]]:w-20 [&_button]:border-none [&_button]:rounded [&_button]:px-3 [&_button]:py-2.5 [&_button]:text-sm [&_button]:cursor-pointer [&_button]:bg-(--color-maroon) [&_button]:text-white [&_button]:font-bold [&_button]:transition-colors hover:[&_button]:bg-(--color-maroon-hover)">
         <label htmlFor="year-select">
           <strong>Hijri Year:</strong>
         </label>
@@ -142,9 +141,7 @@ export default function App() {
           ))}
         </select>
 
-        <button className={styles.printButton} onClick={() => window.print()}>
-          Print to PDF
-        </button>
+        <button onClick={() => window.print()}>Print to PDF</button>
       </div>
 
       <PrayerTable

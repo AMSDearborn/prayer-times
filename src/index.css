@@ -172,3 +172,24 @@ body {
     -webkit-print-color-adjust: exact;
   }
 }
+
+/* Pseudo-element for header pattern overlay */
+.header-container::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  filter: brightness(0) invert(1);
+  background-image: url("/assets/pattern.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  content: "";
+}
+
+@utility page-break-before-always {
+  page-break-before: always;
+}
