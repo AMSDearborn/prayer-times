@@ -1,49 +1,9 @@
 @import "tailwindcss";
 
-/* Amiri */
-@font-face {
-  font-style: normal;
-  font-weight: normal;
-  src: url("/fonts/amiri-regular.ttf") format("truetype");
-  font-family: "Amiri";
-  font-display: swap;
-}
-
-@font-face {
-  font-style: normal;
-  font-weight: bold;
-  src: url("/fonts/amiri-bold.ttf") format("truetype");
-  font-family: "Amiri";
-  font-display: swap;
-}
-
-@font-face {
-  font-style: italic;
-  font-weight: normal;
-  src: url("/fonts/amiri-italic.ttf") format("truetype");
-  font-family: "Amiri";
-  font-display: swap;
-}
-
-@font-face {
-  font-style: italic;
-  font-weight: bold;
-  src: url("/fonts/amiri-bold-italic.ttf") format("truetype");
-  font-family: "Amiri";
-  font-display: swap;
-}
-
 /* Archivo (Variable) */
 @font-face {
   font-style: normal;
   src: url("/fonts/archivo-variable.ttf") format("truetype");
-  font-family: "Archivo";
-  font-display: swap;
-}
-
-@font-face {
-  font-style: italic;
-  src: url("/fonts/archivo-italic-variable.ttf") format("truetype");
   font-family: "Archivo";
   font-display: swap;
 }
@@ -65,26 +25,11 @@
   font-display: swap;
 }
 
-@font-face {
-  font-style: italic;
-  src: url("/fonts/fraunces-italic-variable.ttf") format("truetype");
-  font-family: "Fraunces";
-  font-display: swap;
-}
-
 /* Gill Sans Nova */
 @font-face {
   font-style: normal;
   font-weight: 400;
   src: url("/fonts/gill-sans-nova.ttf") format("truetype");
-  font-family: "Gill Sans Nova";
-  font-display: swap;
-}
-
-@font-face {
-  font-style: italic;
-  font-weight: 400;
-  src: url("/fonts/gill-sans-nova-italic.ttf") format("truetype");
   font-family: "Gill Sans Nova";
   font-display: swap;
 }
@@ -98,14 +43,6 @@
 }
 
 @font-face {
-  font-style: italic;
-  font-weight: 600;
-  src: url("/fonts/gill-sans-nova-bold-italic.ttf") format("truetype");
-  font-family: "Gill Sans Nova";
-  font-display: swap;
-}
-
-@font-face {
   font-style: normal;
   font-weight: 700;
   src: url("/fonts/gill-sans-nova-extrabold.ttf") format("truetype");
@@ -113,30 +50,12 @@
   font-display: swap;
 }
 
-@font-face {
-  font-style: normal;
-  font-weight: 900;
-  src: url("/fonts/gill-sans-nova-ultrabold.ttf") format("truetype");
-  font-family: "Gill Sans Nova";
-  font-display: swap;
-}
-
-/* Manrope (Variable) */
-@font-face {
-  font-style: normal;
-  src: url("/fonts/manrope-variable.ttf") format("truetype");
-  font-family: "Manrope";
-  font-display: swap;
-}
-
 /* Tailwind theme */
 @theme {
-  --font-amiri: "Amiri", serif;
   --font-archivo: "Archivo", sans-serif;
   --font-foda: "Foda", serif;
   --font-fraunces: "Fraunces", serif;
   --font-gill-sans-nova: "Gill Sans Nova", sans-serif;
-  --font-manrope: "Manrope", sans-serif;
 }
 
 :root {
@@ -146,12 +65,12 @@
   --color-even-bg: #eeeaeb;
   --color-white: #ffffff;
   --color-border: #f2f2f2;
-  --border-width: 0.25in;
+  --border-width: 0.15in;
 }
 
 body {
   margin: 0;
-  background-color: #f9f9f9;
+  background-color: #e6e2dc;
   font-family: Calibri, Arial, sans-serif;
 }
 
@@ -173,7 +92,6 @@ body {
   }
 }
 
-/* Pseudo-element for header pattern overlay */
 .header-container::before {
   position: absolute;
   top: 0;
@@ -192,17 +110,4 @@ body {
 
 @utility page-break-before-always {
   page-break-before: always;
-}
-
-/* Subtle geometric motif used in widget background */
-@utility bg-geometric {
-  background-color: transparent;
-  background-image:
-    radial-gradient(circle at center, var(--color-maroon) 0.5px, transparent 0.5px),
-    radial-gradient(circle at center, var(--color-maroon) 0.5px, transparent 0.5px);
-  background-size: 24px 24px;
-  background-position:
-    0 0,
-    12px 12px;
-  opacity: 0.08;
 }

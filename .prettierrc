@@ -5,13 +5,19 @@
   "printWidth": 80,
   "tabWidth": 2,
   "plugins": [
-    "@trivago/prettier-plugin-sort-imports",
+    "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-css-order",
     "prettier-plugin-tailwindcss"
   ],
-  "importOrder": ["^react", "^[a-zA-Z]", "^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "",
+    "^react",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^[./]"
+  ],
+  "importOrderTypeScriptVersion": "5.0.0",
   "cssDeclarationSorterOrder": "concentric-css",
   "cssDeclarationSorterKeepOverrides": false
 }

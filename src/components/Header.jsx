@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 
 import {
   GREGORIAN_MONTHS,
@@ -78,22 +79,10 @@ export default function Header({ monthData, month, basePath = "/" }) {
             <span className="text-(--color-gold)">@AMSDearborn.org</span>
           </p>
         </div>
-        <div className="flex flex-row items-center justify-center gap-2">
-          <img
-            className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${basePath}icons/facebook.svg`}
-            alt="Facebook"
-          />
-          <img
-            className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${basePath}icons/instagram.svg`}
-            alt="Instagram"
-          />
-          <img
-            className="h-3.5 w-3.5 fill-(--color-gold)"
-            src={`${basePath}icons/youtube.svg`}
-            alt="YouTube"
-          />
+        <div className="flex flex-row items-center justify-center gap-2 text-(--color-gold)">
+          <FaFacebookF size={14} aria-label="Facebook" />
+          <FaInstagram size={14} aria-label="Instagram" />
+          <FaYoutube size={14} aria-label="YouTube" />
         </div>
       </div>
 

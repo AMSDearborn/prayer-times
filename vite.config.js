@@ -1,7 +1,7 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig(({ mode }) => {
@@ -29,7 +29,6 @@ export default defineConfig(({ mode }) => {
     };
   }
 
-  // Default dev/build mode (for local development with the full app)
   return {
     plugins: [tailwindcss(), react()],
     resolve: { tsconfigPaths: true },

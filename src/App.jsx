@@ -1,161 +1,60 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 import AdsTable from "./components/AdsTable";
+import Controls from "./components/Controls";
 import PrayerTable from "./components/PrayerTable";
-import PrayerTimesWidget from "./components/PrayerTimesWidget";
-import { HIJRI_MONTHS_EN } from "./constants";
-
-const HIJRI_MONTHS_FILENAME = [
-  "muharram",
-  "safar",
-  "rabi-al-awwal",
-  "rabi-ath-thani",
-  "jumada-al-ula",
-  "jumada-al-akhirah",
-  "rajab",
-  "shaban",
-  "ramadan",
-  "shawwal",
-  "dhul-qadah",
-  "dhul-hijjah",
-];
+import useHijriCalendar from "./hooks/useHijriCalendar";
 
 export default function App() {
-  const [hijriYear, setHijriYear] = useState("");
-  const [hijriMonth, setHijriMonth] = useState(1);
-  const [monthData, setMonthData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const cacheRef = useRef({});
-
-  const fetchAndRender = useCallback(async (year, month) => {
-    setLoading(true);
-    setError(null);
-    setMonthData(null);
-
-    try {
-      let data;
-      if (cacheRef.current[year]) {
-        data = cacheRef.current[year];
-      } else {
-        const url = `https://api.aladhan.com/v1/hijriCalendar?adjustment=0&year=${year}&annual=true&iso8601=false&method=2&school=0&tune=0,0,0,0,0,0,0,0,0&latitude=42.304304&longitude=-83.143549`;
-        const response = await fetch(url);
-        const json = await response.json();
-        data = json.data;
-        cacheRef.current[year] = data;
-      }
-
-      let monthDays;
-      if (Array.isArray(data)) {
-        monthDays = data.filter(
-          (day) => parseInt(day.date.hijri.month.number) === parseInt(month),
-        );
-      } else if (data[month]) {
-        monthDays = data[month];
-      } else {
-        monthDays = Object.values(data).find(
-          (arr) =>
-            arr.length > 0 &&
-            parseInt(arr[0].date.hijri.month.number) === parseInt(month),
-        );
-      }
-
-      if (!monthDays || monthDays.length === 0) {
-        setError("No data found for this month and year.");
-      } else {
-        setMonthData(monthDays);
-        const monthNum = String(month).padStart(2, "0");
-        const monthName = HIJRI_MONTHS_FILENAME[parseInt(month) - 1];
-        document.title = `${year}-${monthNum}-${monthName}`;
-      }
-    } catch (fetchError) {
-      console.error(fetchError);
-      setError("Error loading data from Aladhan API.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const {
+    hijriYear,
+    hijriMonth,
+    monthData,
+    loading,
+    error,
+    setHijriYear,
+    setHijriMonth,
+    changeYear,
+    changeMonth,
+  } = useHijriCalendar();
 
   useEffect(() => {
-    const initialize = async () => {
-      const today = new Date();
-      const day = String(today.getDate()).padStart(2, "0");
-      const month = String(today.getMonth() + 1).padStart(2, "0");
-      const year = today.getFullYear();
-
-      let currentHijriYear = 1447;
-      let currentHijriMonth = 9;
-
-      try {
-        const response = await fetch(
-          `https://api.aladhan.com/v1/gToH?date=${day}-${month}-${year}`,
-        );
-        const json = await response.json();
-        currentHijriYear = parseInt(json.data.hijri.year);
-        currentHijriMonth = parseInt(json.data.hijri.month.number);
-      } catch (fetchError) {
-        console.error(
-          "Failed to fetch current Hijri date, using fallbacks.",
-          fetchError,
-        );
-      }
-
-      setHijriYear(currentHijriYear);
-      setHijriMonth(currentHijriMonth);
-    };
-
-    void initialize();
-  }, []);
-
-  useEffect(() => {
-    if (hijriYear) {
-      fetchAndRender(hijriYear, hijriMonth);
+    if (
+      !loading &&
+      monthData &&
+      new URLSearchParams(window.location.search).has("print")
+    ) {
+      const timer = setTimeout(() => window.print(), 500);
+      return () => clearTimeout(timer);
     }
-  }, [hijriYear, hijriMonth, fetchAndRender]);
+  }, [loading, monthData]);
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-center gap-2.5 bg-white px-4 py-3 shadow-[0_-4px_6px_rgba(0,0,0,0.1)] print:hidden [&_button]:cursor-pointer [&_button]:rounded [&_button]:border-none [&_button]:bg-(--color-maroon) [&_button]:px-3 [&_button]:py-2.5 [&_button]:text-sm [&_button]:font-bold [&_button]:text-white [&_button]:transition-colors hover:[&_button]:bg-(--color-maroon-hover) [&_input]:rounded [&_input]:border [&_input]:border-[#ccc] [&_input]:px-3 [&_input]:py-2.5 [&_input]:text-sm [&_input[type=number]]:w-20 [&_select]:rounded [&_select]:border [&_select]:border-[#ccc] [&_select]:px-3 [&_select]:py-2.5 [&_select]:text-sm">
-        <label htmlFor="year-select">
-          <strong>Hijri Year:</strong>
-        </label>
-        <input
-          type="number"
-          id="year-select"
-          min="1"
-          value={hijriYear}
-          onChange={(event) => setHijriYear(event.target.value)}
-        />
-
-        <label htmlFor="month-select">
-          <strong>Month:</strong>
-        </label>
-        <select
-          id="month-select"
-          value={hijriMonth}
-          onChange={(event) => setHijriMonth(parseInt(event.target.value))}
-        >
-          {HIJRI_MONTHS_EN.map((monthName, index) => (
-            <option key={index + 1} value={index + 1}>
-              {index + 1} - {monthName}
-            </option>
-          ))}
-        </select>
-
-        <button onClick={() => window.print()}>Print to PDF</button>
-      </div>
-
-      <PrayerTable
-        monthData={monthData}
-        month={hijriMonth}
-        loading={loading}
-        error={error}
-        basePath={import.meta.env.BASE_URL}
+      <Controls
+        hijriYear={hijriYear}
+        hijriMonth={hijriMonth}
+        onYearChange={setHijriYear}
+        onMonthChange={setHijriMonth}
+        onChangeYear={changeYear}
+        onChangeMonth={changeMonth}
       />
 
-      <AdsTable monthData={monthData} month={hijriMonth} basePath={import.meta.env.BASE_URL} />
+      <div className="flex justify-center p-2 print:p-0">
+        <PrayerTable
+          monthData={monthData}
+          month={hijriMonth}
+          loading={loading}
+          error={error}
+          basePath={import.meta.env.BASE_URL}
+        />
+      </div>
 
-      <PrayerTimesWidget />
+      <AdsTable
+        monthData={monthData}
+        month={hijriMonth}
+        basePath={import.meta.env.BASE_URL}
+      />
     </>
   );
 }

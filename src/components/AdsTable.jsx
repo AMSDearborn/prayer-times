@@ -2,7 +2,34 @@ import { useState } from "react";
 
 import Header from "./Header";
 
-const AD_EXTENSIONS = ["png", "jpg", "jpeg"];
+export default function AdsTable({ monthData, month, basePath = "/" }) {
+  const rows = [];
+  let adNumber = 1;
+
+  for (let row = 0; row < 7; row++) {
+    const cells = [];
+    for (let col = 0; col < 3; col++) {
+      cells.push(
+        <AdCell key={adNumber} adNumber={adNumber} basePath={basePath} />,
+      );
+      adNumber++;
+    }
+    rows.push(
+      <tr key={row} className="grid h-full grid-cols-3">
+        {cells}
+      </tr>,
+    );
+  }
+
+  return (
+    <section className="page-break-before-always mx-auto hidden h-[14in] w-[8.5in] overflow-hidden bg-white print:mx-0 print:block">
+      <Header monthData={monthData} month={month} basePath={basePath} />
+      <table className="h-[12in] w-full table-fixed border-separate border-spacing-0.5 border-t-0 border-r-(length:--border-width) border-b-(length:--border-width) border-l-(length:--border-width) border-solid border-(--color-maroon)">
+        <tbody className="grid h-full grid-rows-[repeat(7,1fr)]">{rows}</tbody>
+      </table>
+    </section>
+  );
+}
 
 function AdCell({ adNumber, basePath }) {
   const [extIndex, setExtIndex] = useState(0);
@@ -40,29 +67,4 @@ function AdCell({ adNumber, basePath }) {
   );
 }
 
-export default function AdsTable({ monthData, month, basePath = "/" }) {
-  const rows = [];
-  let adNumber = 1;
-
-  for (let row = 0; row < 7; row++) {
-    const cells = [];
-    for (let col = 0; col < 3; col++) {
-      cells.push(<AdCell key={adNumber} adNumber={adNumber} basePath={basePath} />);
-      adNumber++;
-    }
-    rows.push(
-      <tr key={row} className="grid h-full grid-cols-3">
-        {cells}
-      </tr>,
-    );
-  }
-
-  return (
-    <section className="page-break-before-always mx-auto hidden h-[14in] w-[8.5in] overflow-hidden bg-white print:block">
-      <Header monthData={monthData} month={month} basePath={basePath} />
-      <table className="h-[12in] w-full table-fixed border-separate border-spacing-0.5 border-t-0 border-r-(length:--border-width) border-b-(length:--border-width) border-l-(length:--border-width) border-solid border-(--color-maroon)">
-        <tbody className="grid h-full grid-rows-[repeat(7,1fr)]">{rows}</tbody>
-      </table>
-    </section>
-  );
-}
+const AD_EXTENSIONS = ["png", "jpg", "jpeg"];
