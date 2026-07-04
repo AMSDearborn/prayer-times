@@ -16,10 +16,6 @@ A React-based web application that generates dynamic Hijri prayer time calendars
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js (see `.tool-versions` for the recommended version)
-
 ### Installation
 
 ```bash

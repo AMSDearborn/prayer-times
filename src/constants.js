@@ -58,3 +58,18 @@ export const ARABIC_DAY_CORRECTIONS = {
   الاثنين: "الإثنين",
   الاربعاء: "الأربعاء",
 };
+
+// Aladhan API configuration
+export const API_CONFIG = {
+  baseUrl: "https://api.aladhan.com/v1",
+  latitude: 42.304304,
+  longitude: -83.143549,
+  method: 2,
+  school: 0,
+  adjustment: 0,
+  tune: "0,0,0,0,0,0,0,0,0",
+};
+
+// Fallback used if the initial Hijri date lookup fails.
+export const FALLBACK_HIJRI_YEAR = 1448;
+export const FALLBACK_HIJRI_MONTH = 2;

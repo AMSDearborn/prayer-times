@@ -1,15 +1,61 @@
+@import "tailwindcss";
+
+/* Archivo (Variable) */
 @font-face {
+  font-style: normal;
+  src: url("/fonts/archivo-variable.ttf") format("truetype");
+  font-family: "Archivo";
+  font-display: swap;
+}
+
+/* Foda */
+@font-face {
+  font-style: normal;
   font-weight: normal;
-  src: url("/fonts/Gill Sans.otf") format("opentype");
-  font-family: "Gill Sans";
+  src: url("/fonts/foda-regular.ttf") format("truetype");
+  font-family: "Foda";
+  font-display: swap;
+}
+
+/* Fraunces (Variable) */
+@font-face {
+  font-style: normal;
+  src: url("/fonts/fraunces-variable.ttf") format("truetype");
+  font-family: "Fraunces";
+  font-display: swap;
+}
+
+/* Gill Sans Nova */
+@font-face {
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/gill-sans-nova.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
   font-display: swap;
 }
 
 @font-face {
-  font-weight: bold;
-  src: url("/fonts/Gill Sans Bold.otf") format("opentype");
-  font-family: "Gill Sans";
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/gill-sans-nova-bold.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
   font-display: swap;
+}
+
+@font-face {
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/gill-sans-nova-extrabold.ttf") format("truetype");
+  font-family: "Gill Sans Nova";
+  font-display: swap;
+}
+
+/* Tailwind theme */
+@theme {
+  --font-archivo: "Archivo", sans-serif;
+  --font-foda: "Foda", serif;
+  --font-fraunces: "Fraunces", serif;
+  --font-gill-sans-nova: "Gill Sans Nova", sans-serif;
 }
 
 :root {
@@ -19,12 +65,12 @@
   --color-even-bg: #eeeaeb;
   --color-white: #ffffff;
   --color-border: #f2f2f2;
-  --border-width: 0.25in;
+  --border-width: 0.15in;
 }
 
 body {
   margin: 0;
-  background-color: #f9f9f9;
+  background-color: #e6e2dc;
   font-family: Calibri, Arial, sans-serif;
 }
 
@@ -44,4 +90,24 @@ body {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
+}
+
+.header-container::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  filter: brightness(0) invert(1);
+  background-image: url("/assets/pattern.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  content: "";
+}
+
+@utility page-break-before-always {
+  page-break-before: always;
 }
